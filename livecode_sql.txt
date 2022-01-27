@@ -1,0 +1,47 @@
+-- List all customers (name + email), 
+-- ordered alphabetically (no extra information)
+
+SELECT 
+	first_name || " " || last_name AS name,
+	email
+FROM customers
+ORDER BY last_name, first_name
+
+-- List tracks (Name + Composer) 
+-- of the Classical playlist
+
+SELECT t.name, t.composer
+FROM playlists p
+JOIN playlist_tracks pt ON p.id = pt.playlist_id 
+JOIN tracks t ON t.id = pt.track_id
+WHERE p.name = 'Classical'
+
+-- List the 10 artists most listed in all playlists
+
+SELECT 
+	COUNT(t.id) tracks_count,
+	ar.name
+FROM  playlists p 
+JOIN playlist_tracks pt ON p.id = pt.playlist_id 
+JOIN tracks t ON t.id = pt.track_id 
+JOIN albums al ON al.id = t.album_id
+JOIN artists ar ON ar.id = al.artist_id
+GROUP BY ar.id
+ORDER BY tracks_count DESC
+LIMIT 10
+
+
+
+-- List the tracks which have been purchased 
+-- at least twice, ordered by number of purchases
+
+SELECT 
+	COUNT(il.id) lines_count, 
+	*
+FROM tracks t
+JOIN invoice_lines il ON t.id = il.track_id
+GROUP BY t.id
+HAVING lines_count >= 2
+ORDER BY lines_count DESC
+
+
